@@ -1,0 +1,26 @@
+#!/bin/bash                                   
+#SBATCH -A gooogr                            
+##SBATCH --time=168:00:00                       
+#SBATCH --time=21:00:00                       
+#SBATCH -p bigjobq                              
+##SBATCH -p defq                              
+#SBATCH  --job-name=Arctic_Cop     
+##SBATCH  --nodes=4                                   
+##SBATCH  --ntasks-per-node=128                       
+##SBATCH  --output=Arctic       
+#SBATCH --output=%j.out  
+#SBATCH --error=%j.err   
+#SBATCH  --exclusive                                 
+#SBATCH  --ntasks=1280                                
+##SBATCH  --ntasks=1536                                
+##SBATCH  --ntasks=512                                
+#SBATCH  --export=ALL                                
+#SBATCH  --switches=1                                
+                                              
+source ~/loadmodule_gnu_netcdf4new
+module unload OpenSSL/1.1
+
+cd /ari/users/milicak/models/MOM6-Projects/Arctic_Copernicus/work
+# mpirun -np 512 ./MOM6
+# mpirun -np 1536 ./MOM6
+mpirun -np 1245 ./MOM6
