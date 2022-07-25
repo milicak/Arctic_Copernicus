@@ -49,11 +49,11 @@ BATHYMETRY_AT_VEL = False       !   [Boolean] default = False
                                 ! If true, there are separate values for the basin depths at velocity points.
                                 ! Otherwise the effects of topography are entirely determined from thickness
                                 ! points.
-DT = 600.0                      !   [s]
+DT = 400.0                      !   [s]
                                 ! The (baroclinic) dynamics time step.  The time-step that is actually used will
                                 ! be an integer fraction of the forcing time-step (DT_FORCING in ocean-only mode
                                 ! or the coupling timestep in coupled mode.)
-DT_THERM = 3600.0               !   [s] default = 600.0
+DT_THERM = 3600.0               !   [s] default = 400.0
                                 ! The thermodynamic and tracer advection time step. Ideally DT_THERM should be
                                 ! an integer multiple of DT and less than the forcing or coupling time-step,
                                 ! unless THERMO_SPANS_COUPLING is true, in which case DT_THERM can be an integer
@@ -115,23 +115,8 @@ ALTERNATE_FIRST_DIRECTION = False !   [Boolean] default = False
                                 ! updates occur first in directionally split parts of the calculation. If this
                                 ! is true, FIRST_DIRECTION applies at the start of a new run or if the next
                                 ! first direction can not be found in the restart file.
-CHECK_BAD_SURFACE_VALS = True   !   [Boolean] default = False
+CHECK_BAD_SURFACE_VALS = False  !   [Boolean] default = False
                                 ! If true, check the surface state for ridiculous values.
-BAD_VAL_SSH_MAX = 50.0          !   [m] default = 20.0
-                                ! The value of SSH above which a bad value message is triggered, if
-                                ! CHECK_BAD_SURFACE_VALS is true.
-BAD_VAL_SSS_MAX = 75.0          !   [PPT] default = 45.0
-                                ! The value of SSS above which a bad value message is triggered, if
-                                ! CHECK_BAD_SURFACE_VALS is true.
-BAD_VAL_SST_MAX = 55.0          !   [deg C] default = 45.0
-                                ! The value of SST above which a bad value message is triggered, if
-                                ! CHECK_BAD_SURFACE_VALS is true.
-BAD_VAL_SST_MIN = -3.0          !   [deg C] default = -2.1
-                                ! The value of SST below which a bad value message is triggered, if
-                                ! CHECK_BAD_SURFACE_VALS is true.
-BAD_VAL_COLUMN_THICKNESS = 0.0  !   [m] default = 0.0
-                                ! The value of column thickness below which a bad value message is triggered, if
-                                ! CHECK_BAD_SURFACE_VALS is true.
 DEFAULT_2018_ANSWERS = False    !   [Boolean] default = False
                                 ! This sets the default value for the various _2018_ANSWERS parameters.
 SURFACE_2018_ANSWERS = False    !   [Boolean] default = False
@@ -1430,9 +1415,82 @@ SET_DIFF_2018_ANSWERS = False   !   [Boolean] default = False
 ! Vertical Tidal Mixing Parameterization
 USE_CVMix_TIDAL = False         !   [Boolean] default = False
                                 ! If true, turns on tidal mixing via CVMix
-INT_TIDE_DISSIPATION = False    !   [Boolean] default = False
+INT_TIDE_DISSIPATION = True     !   [Boolean] default = False
                                 ! If true, use an internal tidal dissipation scheme to drive diapycnal mixing,
                                 ! along the lines of St. Laurent et al. (2002) and Simmons et al. (2004).
+TIDAL_MIXING_2018_ANSWERS = False !   [Boolean] default = False
+                                ! If true, use the order of arithmetic and expressions that recover the answers
+                                ! from the end of 2018.  Otherwise, use updated and more robust forms of the
+                                ! same expressions.
+INT_TIDE_PROFILE = "POLZIN_09"  ! default = "STLAURENT_02"
+                                ! INT_TIDE_PROFILE selects the vertical profile of energy dissipation with
+                                ! INT_TIDE_DISSIPATION. Valid values are:
+                                !    STLAURENT_02 - Use the St. Laurent et al exponential
+                                !                   decay profile.
+                                !    POLZIN_09 - Use the Polzin WKB-stretched algebraic
+                                !                   decay profile.
+LEE_WAVE_DISSIPATION = False    !   [Boolean] default = False
+                                ! If true, use an lee wave driven dissipation scheme to drive diapycnal mixing,
+                                ! along the lines of Nikurashin (2010) and using the St. Laurent et al. (2002)
+                                ! and Simmons et al. (2004) vertical profile
+INT_TIDE_LOWMODE_DISSIPATION = False !   [Boolean] default = False
+                                ! If true, consider mixing due to breaking low modes that have been remotely
+                                ! generated; as with itidal drag on the barotropic tide, use an internal tidal
+                                ! dissipation scheme to drive diapycnal mixing, along the lines of St. Laurent
+                                ! et al. (2002) and Simmons et al. (2004).
+NU_POLZIN = 0.0697              !   [nondim] default = 0.0697
+                                ! When the Polzin decay profile is used, this is a non-dimensional constant in
+                                ! the expression for the vertical scale of decay for the tidal energy
+                                ! dissipation.
+NBOTREF_POLZIN = 9.61E-04       !   [s-1] default = 9.61E-04
+                                ! When the Polzin decay profile is used, this is the reference value of the
+                                ! buoyancy frequency at the ocean bottom in the Polzin formulation for the
+                                ! vertical scale of decay for the tidal energy dissipation.
+POLZIN_DECAY_SCALE_FACTOR = 1.0 !   [nondim] default = 1.0
+                                ! When the Polzin decay profile is used, this is a scale factor for the vertical
+                                ! scale of decay of the tidal energy dissipation.
+POLZIN_SCALE_MAX_FACTOR = 1.0   !   [nondim] default = 1.0
+                                ! When the Polzin decay profile is used, this is a factor to limit the vertical
+                                ! scale of decay of the tidal energy dissipation to
+                                ! POLZIN_DECAY_SCALE_MAX_FACTOR times the depth of the ocean.
+POLZIN_MIN_DECAY_SCALE = 0.0    !   [m] default = 0.0
+                                ! When the Polzin decay profile is used, this is the minimum vertical decay
+                                ! scale for the vertical profile
+                                ! of internal tide dissipation with the Polzin (2009) formulation
+INT_TIDE_DECAY_SCALE = 300.3003003003003 !   [m] default = 500.0
+                                ! The decay scale away from the bottom for tidal TKE with the new coding when
+                                ! INT_TIDE_DISSIPATION is used.
+MU_ITIDES = 0.2                 !   [nondim] default = 0.2
+                                ! A dimensionless turbulent mixing efficiency used with INT_TIDE_DISSIPATION,
+                                ! often 0.2.
+GAMMA_ITIDES = 0.3333           !   [nondim] default = 0.3333
+                                ! The fraction of the internal tidal energy that is dissipated locally with
+                                ! INT_TIDE_DISSIPATION. THIS NAME COULD BE BETTER.
+MIN_ZBOT_ITIDES = 0.0           !   [m] default = 0.0
+                                ! Turn off internal tidal dissipation when the total ocean depth is less than
+                                ! this value.
+KAPPA_ITIDES = 6.28319E-04      !   [m-1] default = 6.283185307179586E-04
+                                ! A topographic wavenumber used with INT_TIDE_DISSIPATION. The default is 2pi/10
+                                ! km, as in St.Laurent et al. 2002.
+UTIDE = 0.0                     !   [m s-1] default = 0.0
+                                ! The constant tidal amplitude used with INT_TIDE_DISSIPATION.
+KAPPA_H2_FACTOR = 0.84          !   [nondim] default = 1.0
+                                ! A scaling factor for the roughness amplitude with INT_TIDE_DISSIPATION.
+TKE_ITIDE_MAX = 0.1             !   [W m-2] default = 1000.0
+                                ! The maximum internal tide energy source available to mix above the bottom
+                                ! boundary layer with INT_TIDE_DISSIPATION.
+READ_TIDEAMP = True             !   [Boolean] default = False
+                                ! If true, read a file (given by TIDEAMP_FILE) containing the tidal amplitude
+                                ! with INT_TIDE_DISSIPATION.
+TIDEAMP_FILE = "tidal_amplitude_Arctic.nc" ! default = "tideamp.nc"
+                                ! The path to the file containing the spatially varying tidal amplitudes with
+                                ! INT_TIDE_DISSIPATION.
+H2_FILE = "tidal_amplitude_Arctic.nc" !
+                                ! The path to the file containing the sub-grid-scale topographic roughness
+                                ! amplitude with INT_TIDE_DISSIPATION.
+FRACTIONAL_ROUGHNESS_MAX = 0.1  !   [nondim] default = 0.1
+                                ! The maximum topographic roughness amplitude as a fraction of the mean depth,
+                                ! or a negative value for no limitations on roughness.
 ML_RADIATION = False            !   [Boolean] default = False
                                 ! If true, allow a fraction of TKE available from wind work to penetrate below
                                 ! the base of the mixed layer with a vertical decay scale determined by the
@@ -1454,6 +1512,10 @@ USE_LOTW_BBL_DIFFUSIVITY = True !   [Boolean] default = False
 LOTW_BBL_USE_OMEGA = True       !   [Boolean] default = True
                                 ! If true, use the maximum of Omega and N for the TKE to diffusion calculation.
                                 ! Otherwise, N is N.
+SIMPLE_TKE_TO_KD = True         !   [Boolean] default = False
+                                ! If true, uses a simple estimate of Kd/TKE that will work for arbitrary
+                                ! vertical coordinates. If false, calculates Kd/TKE and bounds based on exact
+                                ! energetics for an isopycnal layer-formulation.
 
 ! === module MOM_bkgnd_mixing ===
 ! Adding static vertical background mixing coefficients
@@ -1507,9 +1569,16 @@ DISSIPATION_N1 = 0.0            !   [J m-3] default = 0.0
                                 ! = A + B*N
 DISSIPATION_KD_MIN = 0.0        !   [m2 s-1] default = 0.0
                                 ! The minimum vertical diffusivity applied as a floor.
-DOUBLE_DIFFUSION = False        !   [Boolean] default = False
+DOUBLE_DIFFUSION = True         !   [Boolean] default = False
                                 ! If true, increase diffusivites for temperature or salinity based on the
                                 ! double-diffusive parameterization described in Large et al. (1994).
+MAX_RRHO_SALT_FINGERS = 2.55    !   [nondim] default = 2.55
+                                ! Maximum density ratio for salt fingering regime.
+MAX_SALT_DIFF_SALT_FINGERS = 1.0E-04 !   [m2 s-1] default = 1.0E-04
+                                ! Maximum salt diffusivity for salt fingering regime.
+KV_MOLECULAR = 1.5E-06          !   [m2 s-1] default = 1.5E-06
+                                ! Molecular viscosity for calculation of fluxes under double-diffusive
+                                ! convection.
 
 ! === module MOM_kappa_shear ===
 ! Parameterization of shear-driven turbulence following Jackson, Hallberg and Legg, JPO 2008
@@ -1605,7 +1674,7 @@ RECLAIM_FRAZIL = True           !   [Boolean] default = True
                                 ! If true, try to use any frazil heat deficit to cool any overlying layers down
                                 ! to the freezing point, thereby avoiding the creation of thin ice when the SST
                                 ! is above the freezing point.
-PRESSURE_DEPENDENT_FRAZIL = True !   [Boolean] default = False
+PRESSURE_DEPENDENT_FRAZIL = False !   [Boolean] default = False
                                 ! If true, use a pressure dependent freezing temperature when making frazil. The
                                 ! default is false, which will be faster but is inappropriate with ice-shelf
                                 ! cavities.
@@ -1614,9 +1683,11 @@ IGNORE_FLUXES_OVER_LAND = False !   [Boolean] default = False
                                 ! points. This is needed when the ocean is coupled with ice shelves and sea ice,
                                 ! since the sea ice mask needs to be different than the ocean mask to avoid sea
                                 ! ice formation under ice shelves. This flag only works when use_ePBL = True.
-DO_RIVERMIX = False             !   [Boolean] default = False
+DO_RIVERMIX = True              !   [Boolean] default = False
                                 ! If true, apply additional mixing wherever there is runoff, so that it is mixed
                                 ! down to RIVERMIX_DEPTH if the ocean is that deep.
+RIVERMIX_DEPTH = 0.0            !   [m] default = 0.0
+                                ! The depth to which rivers are mixed if DO_RIVERMIX is defined.
 USE_RIVER_HEAT_CONTENT = False  !   [Boolean] default = False
                                 ! If true, use the fluxes%runoff_Hflx field to set the heat carried by runoff,
                                 ! instead of using SST*CP*liq_runoff.
@@ -1938,11 +2009,6 @@ WIND_STRESS_MULTIPLIER = 1.0    !   [nondim] default = 1.0
                                 ! is used for testing and should be =1.0 for any production runs.
 CD_TIDES = 0.0018               !   [nondim] default = 1.0E-04
                                 ! The drag coefficient that applies to the tides.
-READ_TIDEAMP = False            !   [Boolean] default = False
-                                ! If true, read a file (given by TIDEAMP_FILE) containing the tidal amplitude
-                                ! with INT_TIDE_DISSIPATION.
-UTIDE = 0.0                     !   [m s-1] default = 0.0
-                                ! The constant tidal amplitude used with INT_TIDE_DISSIPATION.
 READ_GUST_2D = False            !   [Boolean] default = False
                                 ! If true, use a 2-dimensional gustiness supplied from an input file
 GUST_CONST = 0.0                !   [Pa] default = 0.0

@@ -22,7 +22,7 @@ THICKNESSDIFFUSE_FIRST = True   !   [Boolean] default = False
                                 ! If true, do thickness diffusion before dynamics.
                                 ! This is only used if THICKNESSDIFFUSE is true.
 DIABATIC_FIRST = True
-DT = 600.0                      !   [s]
+DT = 400.0                      !   [s]
                                 ! The (baroclinic) dynamics time step.  The time-step that
                                 ! is actually used will be an integer fraction of the
                                 ! forcing time-step (DT_FORCING in ocean-only mode or the
@@ -59,7 +59,7 @@ C_P = 3992.0                    !   [J kg-1 K-1] default = 3991.86795711963
 DEFAULT_2018_ANSWERS = False    !   [Boolean] default = True                                           
                                 ! This sets the default value for the various _2018_ANSWERS parameters.
 SURFACE_2018_ANSWERS = False    !   [Boolean] default = False                                          
-CHECK_BAD_SURFACE_VALS = True   !   [Boolean] default = False
+CHECK_BAD_SURFACE_VALS = False  !   [Boolean] default = False
                                 ! If true, check the surface state for ridiculous values.
 BAD_VAL_SSH_MAX = 50.0          !   [m] default = 20.0
                                 ! The value of SSH above which a bad value message is
@@ -70,7 +70,7 @@ BAD_VAL_SSS_MAX = 75.0          !   [PPT] default = 45.0
 BAD_VAL_SST_MAX = 55.0          !   [deg C] default = 45.0
                                 ! The value of SST above which a bad value message is
                                 ! triggered, if CHECK_BAD_SURFACE_VALS is true.
-BAD_VAL_SST_MIN = -3.0          !   [deg C] default = -2.1
+BAD_VAL_SST_MIN = -5.1          !   [deg C] default = -2.1
                                 ! The value of SST below which a bad value message is
                                 ! triggered, if CHECK_BAD_SURFACE_VALS is true.
 SAVE_INITIAL_CONDS = True       ! [Boolean] default = False
@@ -723,7 +723,10 @@ KD_MAX = 0.1                    !   [m2 s-1] default = -1.0
                                 ! The maximum permitted increment for the diapycnal
                                 ! diffusivity from TKE-based parameterizations, or a
                                 ! negative value for no limit.
-INT_TIDE_DISSIPATION = False    !   [Boolean] default = False
+DOUBLE_DIFFUSION = True         !   [Boolean] default = False
+                                ! If true, increase diffusivites for temperature or salinity based on the
+                                ! double-diffusive parameterization described in Large et al. (1994).
+INT_TIDE_DISSIPATION = True     !   [Boolean] default = False
                                 ! If true, use an internal tidal dissipation scheme to
                                 ! drive diapycnal mixing, along the lines of St. Laurent
                                 ! et al. (2002) and Simmons et al. (2004).
@@ -745,13 +748,13 @@ KAPPA_H2_FACTOR = 0.84          !   [nondim] default = 1.0
 TKE_ITIDE_MAX = 0.1             !   [W m-2] default = 1000.0
                                 ! The maximum internal tide energy source availble to mix
                                 ! above the bottom boundary layer with INT_TIDE_DISSIPATION.
-READ_TIDEAMP = False            !   [Boolean] default = False
+READ_TIDEAMP = True             !   [Boolean] default = False
                                 ! If true, read a file (given by TIDEAMP_FILE) containing
                                 ! the tidal amplitude with INT_TIDE_DISSIPATION.
-TIDEAMP_FILE = "tidal_amplitude.nc" ! default = "tideamp.nc"
+TIDEAMP_FILE = "tidal_amplitude_Arctic.nc" ! default = "tideamp.nc"
                                 ! The path to the file containing the spatially varying
                                 ! tidal amplitudes with INT_TIDE_DISSIPATION.
-H2_FILE = "ocean_topog.nc"      !
+H2_FILE = "tidal_amplitude_Arctic.nc"      !
                                 ! The path to the file containing the sub-grid-scale
                                 ! topographic roughness amplitude with INT_TIDE_DISSIPATION.
 
@@ -769,10 +772,13 @@ MAX_RINO_IT = 25                !   [nondim] default = 50
 
 ! === module MOM_diabatic_aux ===
 ! The following parameters are used for auxiliary diabatic processes.
-PRESSURE_DEPENDENT_FRAZIL = True !   [Boolean] default = False
+PRESSURE_DEPENDENT_FRAZIL = False !   [Boolean] default = False
                                 ! If true, use a pressure dependent freezing temperature
                                 ! when making frazil. The default is false, which will be
                                 ! faster but is inappropriate with ice-shelf cavities.
+DO_RIVERMIX = True              !   [Boolean] default = False
+                                ! If true, apply additional mixing wherever there is runoff, so that it is mixed
+                                ! down to RIVERMIX_DEPTH if the ocean is that deep.
 
 ! === module MOM_energetic_PBL ===
 ML_OMEGA_FRAC = 0.001           !   [nondim] default = 0.0
