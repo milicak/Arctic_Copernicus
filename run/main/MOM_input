@@ -178,7 +178,7 @@ OBC_COMPUTED_STRAIN = True      !   [Boolean] default = False
 OBC_ZERO_BIHARMONIC = True      !   [Boolean] default = False
                                 ! If true, zeros the Laplacian of flow on open boundaries in the biharmonic
                                 ! viscosity term.
-RAMP_OBCS = True                ! ramp obc
+RAMP_OBCS = False                ! ramp obc
 OBC_RAMP_TIMESCALE = 2.0       !   [days] default = 1.0
                                 ! If RAMP_OBCS is true, this sets the ramping timescale.
 OBC_TIDE_N_CONSTITUENTS = 0    ! default = 0
@@ -886,7 +886,7 @@ CHECK_DIFFUSIVE_CFL = True      !   [Boolean] default = False
 ! This module implements neutral diffusion of tracers
 
 ! === module ocean_model_init ===
-ENERGYSAVEDAYS = 0.25           !   [days] default = 1.0
+ENERGYSAVEDAYS = 1.0           !   [days] default = 1.0
                                 ! The interval in units of TIMEUNIT between saves of the
                                 ! energies of the run and other globally summed diagnostics.
 
@@ -909,7 +909,7 @@ SEA_ICE_RIGID_MASS = 100.0      !   [kg m-2] default = 1000.0
                                 ! The mass of sea-ice per unit area at which the sea-ice
                                 ! starts to exhibit rigidity
 ! === Sponge options ===                                                        
-SPONGE = True                  !   [Boolean] default = False                  
+SPONGE = False                  !   [Boolean] default = False                  
                                 ! If true, sponges may be applied anywhere in the domain.
                                 ! The exact location and properties of those sponges are
                                 ! specified via SPONGE_CONFIG.                  

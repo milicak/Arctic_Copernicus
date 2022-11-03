@@ -273,7 +273,7 @@ OBC_ZERO_BIHARMONIC = True      !   [Boolean] default = False
                                 ! viscosity term.
 MASK_OUTSIDE_OBCS = False       !   [Boolean] default = False
                                 ! If true, set the areas outside open boundaries to be land.
-RAMP_OBCS = True                !   [Boolean] default = False
+RAMP_OBCS = False               !   [Boolean] default = False
                                 ! If true, ramps from zero to the external values over time, witha ramping
                                 ! timescale given by RAMP_TIMESCALE. Ramping SSH only so far
 OBC_RAMP_TIMESCALE = 2.0        !   [days] default = 1.0
@@ -548,38 +548,6 @@ FATAL_INCONSISTENT_RESTART_TIME = False !   [Boolean] default = False
                                 ! If true and a time_in value is provided to MOM_initialize_state, verify that
                                 ! the time read from a restart file is the same as time_in, and issue a fatal
                                 ! error if it is not.  Otherwise, simply set the time to time_in if present.
-INIT_LAYERS_FROM_Z_FILE = True  !   [Boolean] default = False
-                                ! If true, initialize the layer thicknesses, temperatures, and salinities from a
-                                ! Z-space file on a latitude-longitude grid.
-
-! === module MOM_initialize_layers_from_Z ===
-TEMP_SALT_Z_INIT_FILE = "SODA_TS_IC.nc" ! default = "temp_salt_z.nc"
-                                ! The name of the z-space input file used to initialize temperatures (T) and
-                                ! salinities (S). If T and S are not in the same file, TEMP_Z_INIT_FILE and
-                                ! SALT_Z_INIT_FILE must be set.
-TEMP_Z_INIT_FILE = "SODA_TS_IC.nc" ! default = "SODA_TS_IC.nc"
-                                ! The name of the z-space input file used to initialize temperatures, only.
-SALT_Z_INIT_FILE = "SODA_TS_IC.nc" ! default = "SODA_TS_IC.nc"
-                                ! The name of the z-space input file used to initialize temperatures, only.
-Z_INIT_FILE_PTEMP_VAR = "temp"  ! default = "ptemp"
-                                ! The name of the potential temperature variable in TEMP_Z_INIT_FILE.
-Z_INIT_FILE_SALT_VAR = "salt"   ! default = "salt"
-                                ! The name of the salinity variable in SALT_Z_INIT_FILE.
-Z_INIT_HOMOGENIZE = False       !   [Boolean] default = False
-                                ! If True, then horizontally homogenize the interpolated initial conditions.
-Z_INIT_ALE_REMAPPING = True     !   [Boolean] default = False
-                                ! If True, then remap straight to model coordinate from file.
-Z_INIT_REMAPPING_SCHEME = "PPM_IH4" ! default = "PPM_IH4"
-                                ! The remapping scheme to use if using Z_INIT_ALE_REMAPPING is True.
-Z_INIT_REMAP_GENERAL = True     !   [Boolean] default = False
-                                ! If false, only initializes to z* coordinates. If true, allows initialization
-                                ! directly to general coordinates.
-Z_INIT_REMAP_FULL_COLUMN = True !   [Boolean] default = True
-                                ! If false, only reconstructs profiles for valid data points. If true, inserts
-                                ! vanished layers below the valid data.
-Z_INIT_REMAP_OLD_ALG = False    !   [Boolean] default = False
-                                ! If false, uses the preferred remapping algorithm for initialization. If true,
-                                ! use an older, less robust algorithm for remapping.
 TEMP_SALT_INIT_VERTICAL_REMAP_ONLY = True !   [Boolean] default = False
                                 ! If true, initial conditions are on the model horizontal grid. Extrapolation
                                 ! over missing ocean values is done using an ICE-9 procedure with vertical ALE
@@ -588,80 +556,11 @@ HOR_REGRID_2018_ANSWERS = False !   [Boolean] default = False
                                 ! If true, use the order of arithmetic for horizonal regridding that recovers
                                 ! the answers from the end of 2018.  Otherwise, use rotationally symmetric forms
                                 ! of the same expressions.
-VELOCITY_CONFIG = "zero"        ! default = "zero"
-                                ! A string that determines how the initial velocities are specified for a new
-                                ! run:
-                                !     file - read velocities from the file specified
-                                !       by (VELOCITY_FILE).
-                                !     zero - the fluid is initially at rest.
-                                !     uniform - the flow is uniform (determined by
-                                !       parameters INITIAL_U_CONST and INITIAL_V_CONST).
-                                !     rossby_front - a mixed layer front in thermal wind balance.
-                                !     soliton - Equatorial Rossby soliton.
-                                !     USER - call a user modified routine.
-CONVERT_THICKNESS_UNITS = False !   [Boolean] default = False
-                                ! If true,  convert the thickness initial conditions from units of m to kg m-2
-                                ! or vice versa, depending on whether BOUSSINESQ is defined. This does not apply
-                                ! if a restart file is read.
-DEPRESS_INITIAL_SURFACE = True  !   [Boolean] default = False
-                                ! If true,  depress the initial surface to avoid huge tsunamis when a large
-                                ! surface pressure is applied.
-TRIM_IC_FOR_P_SURF = False      !   [Boolean] default = False
-                                ! If true, cuts way the top of the column for initial conditions at the depth
-                                ! where the hydrostatic pressure matches the imposed surface pressure which is
-                                ! read from file.
-SURFACE_HEIGHT_IC_FILE = "SODA_ssh_IC.nc" !
-                                ! The initial condition file for the surface height.
-SURFACE_HEIGHT_IC_VAR = "ssh"   ! default = "SSH"
-                                ! The initial condition variable for the surface height.
-SURFACE_HEIGHT_IC_SCALE = 1.0   !   [variable] default = 1.0
-                                ! A scaling factor to convert SURFACE_HEIGHT_IC_VAR into units of m
-REGRID_ACCELERATE_INIT = False  !   [Boolean] default = False
-                                ! If true, runs REGRID_ACCELERATE_ITERATIONS iterations of the regridding
-                                ! algorithm to push the initial grid to be consistent with the initial
-                                ! condition. Useful only for state-based and iterative coordinates.
 ODA_INCUPD = False              !   [Boolean] default = False
                                 ! If true, oda incremental updates will be applied everywhere in the domain.
-SPONGE = True                   !   [Boolean] default = False
+SPONGE = False                  !   [Boolean] default = False
                                 ! If true, sponges may be applied anywhere in the domain. The exact location and
                                 ! properties of those sponges are specified via SPONGE_CONFIG.
-SPONGE_CONFIG = "file"          ! default = "file"
-                                ! A string that sets how the sponges are configured:
-                                !     file - read sponge properties from the file
-                                !       specified by (SPONGE_FILE).
-                                !     ISOMIP - apply ale sponge in the ISOMIP case
-                                !     RGC - apply sponge in the rotating_gravity_current case
-                                !     DOME - use a slope and channel configuration for the
-                                !       DOME sill-overflow test case.
-                                !     BFB - Sponge at the southern boundary of the domain
-                                !       for buoyancy-forced basin case.
-                                !     USER - call a user modified routine.
-SPONGE_DAMPING_FILE = "ocean_sponge.nc" !
-                                ! The name of the file with the sponge damping rates.
-SPONGE_STATE_FILE = "monthly_sponge_soda.nc" ! default = "ocean_sponge.nc"
-                                ! The name of the file with the state to damp toward.
-SPONGE_PTEMP_VAR = "temp"       ! default = "PTEMP"
-                                ! The name of the potential temperature variable in SPONGE_STATE_FILE.
-SPONGE_SALT_VAR = "salt"        ! default = "SALT"
-                                ! The name of the salinity variable in SPONGE_STATE_FILE.
-SPONGE_UV = False               !   [Boolean] default = False
-                                ! Apply sponges in u and v, in addition to tracers.
-SPONGE_ETA_VAR = "ssh"          ! default = "ETA"
-                                ! The name of the interface height variable in SPONGE_STATE_FILE.
-SPONGE_IDAMP_VAR = "IDAMP"      ! default = "Idamp"
-                                ! The name of the inverse damping rate variable in SPONGE_DAMPING_FILE.
-NEW_SPONGES = False             !   [of sponge restoring data.] default = False
-                                ! Set True if using the newer sponging code which performs on-the-fly regridding
-                                ! in lat-lon-time.
-INTERPOLATE_SPONGE_TIME_SPACE = True !   [of sponge restoring data.] default = True
-                                ! Set True if using the newer sponging code which performs on-the-fly regridding
-                                ! in lat-lon-time.
-
-! === module MOM_sponge ===
-SPONGE_DATA_ONGRID = True       !   [Boolean] default = False
-                                ! When defined, the incoming sponge data are assumed to be on the model grid
-!Total sponge columns at h points = 186823 !
-                                ! The total number of columns where sponges are applied at h points.
 OBC_SEGMENT_001_DATA = "U=file:obc_uv_north.nc(u),V=file:obc_uv_north.nc(v),SSH=file:obc_ssh_north.nc(ssh),TEMP=file:obc_ts_north.nc(temp),SALT=file:obc_ts_north.nc(salt)" !
                                 ! OBC segment docs
 OBC_SEGMENT_002_DATA = "U=file:obc_uv_west.nc(u),V=file:obc_uv_west.nc(v),SSH=file:obc_ssh_west.nc(ssh),TEMP=file:obc_ts_west.nc(temp),SALT=file:obc_ts_west.nc(salt)" !
@@ -1934,7 +1833,7 @@ READ_DEPTH_LIST = False         !   [Boolean] default = False
 DEPTH_LIST_MIN_INC = 1.0E-10    !   [m] default = 1.0E-10
                                 ! The minimum increment between the depths of the entries in the depth-list
                                 ! file.
-ENERGYSAVEDAYS = 0.25           !   [days] default = 1.0
+ENERGYSAVEDAYS = 1.0            !   [days] default = 1.0
                                 ! The interval in units of TIMEUNIT between saves of the energies of the run and
                                 ! other globally summed diagnostics.
 ENERGYSAVEDAYS_GEOMETRIC = 0.0  !   [days] default = 0.0
